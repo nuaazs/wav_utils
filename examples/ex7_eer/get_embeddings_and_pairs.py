@@ -1,7 +1,7 @@
 import os
 import numpy as np
 import paddle
-import metrics
+# import metrics
 
 import torch
 from tqdm import tqdm
@@ -46,8 +46,8 @@ if __name__ == "__main__":
     all_wavs = []
 
     # if npy exist, just load
-    if os.path.exists(f"./npys/{cfg.NAME}/{cfg.NAME}_embeddings.npy") and cfg.LOAD_NPY:
-        embeddings = np.load(f"./npys/{cfg.NAME}/{cfg.NAME}_embeddings.npy",allow_pickle=True).item()
+    if os.path.exists(f"../../cache/{cfg.NAME}/{cfg.NAME}_embeddings.npy") and cfg.LOAD_NPY:
+        embeddings = np.load(f"../../cache/{cfg.NAME}/{cfg.NAME}_embeddings.npy",allow_pickle=True).item()
         for phone in embeddings:
             phone_file_nums = 0
             for filename in embeddings[phone]:
@@ -58,7 +58,7 @@ if __name__ == "__main__":
         print("Load npy file successfully.")
     else:
         from sb_encoder import generate_embedding as generate_embedding_sb
-        from encoder import generate_embedding
+        # from encoder import generate_embedding
         for phone in tqdm(os.listdir(cfg.DATA_FOLDER_8k_vad)):
             embeddings[phone] = {}
             phone_path = os.path.join(cfg.DATA_FOLDER_8k_vad, phone)
@@ -70,8 +70,8 @@ if __name__ == "__main__":
                     # if > 5 MB skip
                     if file_size > 20 * 1024 * 1024:
                         continue
-                    if "paddle" in cfg.NAME:
-                        embeddings[phone][filename] = generate_embedding(file_path).detach().cpu().numpy()
+                    # if "paddle" in cfg.NAME:
+                    #     embeddings[phone][filename] = generate_embedding(file_path).detach().cpu().numpy()
                     elif "speechbrain" in cfg.NAME:
                         embeddings[phone][filename]=generate_embedding_sb(file_path).detach().cpu().numpy()
                     else:
@@ -80,7 +80,7 @@ if __name__ == "__main__":
                 except Exception as e:
                     logger.error(f"Error in {file_path}: {e}")
                     continue
-        np.save(f"./npys/{cfg.NAME}/{cfg.NAME}_embeddings.npy",embeddings)
+        np.save(f"../../cache/{cfg.NAME}/{cfg.NAME}_embeddings.npy",embeddings)
     
     all_wavs = sorted(all_wavs)
 

@@ -2,7 +2,9 @@ import torchaudio
 from speechbrain.pretrained import EncoderClassifier
 import os
 import subprocess
-classifier = EncoderClassifier.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb")
+import cfg
+# load model to cuda:0
+classifier = EncoderClassifier.from_hparams(source=cfg.MODEL_PATH,run_opts={"device": "cuda:0"})
 # signal, fs =torchaudio.load('tests/samples/ASR/spk1_snt1.wav')
 #print(f"Load model: {classifier}")
 def generate_embedding(file_path):

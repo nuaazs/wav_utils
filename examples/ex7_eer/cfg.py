@@ -9,9 +9,9 @@ NAME = "ecapa_speechbrain"
 SR = 8000
 
 RAW_DATA_FOLDER = '/ssd2/cti_test_dataset'
-DATA_FOLDER_8k = RAW_DATA_FOLDER+'_8k'
+# DATA_FOLDER_8k = RAW_DATA_FOLDER+'_8k'
 DATA_FOLDER_8k_vad = RAW_DATA_FOLDER+'_8k_vad'
-DATA_FOLDER_16k_vad = RAW_DATA_FOLDER+'_16k_vad'
+# DATA_FOLDER_16k_vad = RAW_DATA_FOLDER+'_16k_vad'
 
 LOAD_NPY = False
 WORKERS = 20

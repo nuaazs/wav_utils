@@ -1,7 +1,7 @@
 import os
 import numpy as np
 import paddle
-import metrics
+# import metrics
 
 import torch
 from tqdm import tqdm
@@ -58,7 +58,7 @@ def get_score(features1, features2):
 if __name__ == "__main__":
     embeddings = {}
     all_wavs = []
-    embeddings = np.load(f"../cache/{cfg.NAME}/{cfg.NAME}_embeddings.npy",allow_pickle=True).item()
+    embeddings = np.load(f"../../cache/{cfg.NAME}/{cfg.NAME}_embeddings.npy",allow_pickle=True).item()
     for phone in embeddings:
         phone_file_nums = 0
         for filename in embeddings[phone]:
@@ -126,5 +126,5 @@ if __name__ == "__main__":
     print(f"scores: {scores.shape}")
 
     # save scores and labels
-    np.save(f"./npys/{cfg.NAME}/{cfg.NAME}_scores_{args.worker_idx}.npy",scores)
-    np.save(f"./npys/{cfg.NAME}/{cfg.NAME}_labels_{args.worker_idx}.npy",labels)
+    np.save(f"../../cache/{cfg.NAME}/{cfg.NAME}_scores_{args.worker_idx}.npy",scores)
+    np.save(f"../../cache/{cfg.NAME}/{cfg.NAME}_labels_{args.worker_idx}.npy",labels)

@@ -9,7 +9,7 @@ import cfg
 
 if __name__ == "__main__":
     embeddings = {}
-    npy_path = f"../cache/{cfg.NAME}"
+    npy_path = f"../../cache/{cfg.NAME}"
     # glob all score npy files
     score_npy_files = sorted([os.path.join(npy_path, x) for x in os.listdir(npy_path) if "scores" in x])
     labels_npy_files = sorted([os.path.join(npy_path, x) for x in os.listdir(npy_path) if "labels" in x])
