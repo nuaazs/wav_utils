@@ -1,0 +1,1 @@
+/home/zhaosheng/voiceprint-recognition-system/utils/examples/ex7_eer/../../models/ECAPATDNN-16k-phone_1/custom.py

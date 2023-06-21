@@ -43,7 +43,7 @@ process(){
         # -map_channel: map audio channel
         # ffmpeg -y -i "$file" -ac 1 -ar $3 -acodec pcm_s16le -map_channel 0.0.$5 /"$dst_file_path" #> /dev/null 2>&1
         date=$(date +%Y%m%d)
-        ffmpeg -y -i "$file" -ac 1 -ar $sample_rate -acodec pcm_s16le -map_channel 0.0.$channel -ss $start -t $duration /"$dst_file_path"  > ${date}_resample.log 2>&1
+        ffmpeg -y -i "$file" -ac 1 -ar $sample_rate -acodec pcm_s16le -map_channel 0.0.$channel -ss $start -t $duration /"$dst_file_path"  > ${date}_resample.log > /dev/null 2>&1
     done
     echo -e "\n\nDone!"
 }
@@ -81,8 +81,8 @@ if [ ! -d "$2" ]; then
 fi
 
 # Check if the sample rate is valid
-if [ $3 -ne 1600 ] && [ $3 -ne 48000 ] && [ $3 -ne 8000 ]; then
-    echo "Error: sample rate must be 1600, 8000 or 48000"
+if [ $3 -ne 16000 ] && [ $3 -ne 48000 ] && [ $3 -ne 8000 ]; then
+    echo "Error: sample rate must be 16000, 8000 or 48000"
     exit 1
 fi
 
@@ -148,7 +148,7 @@ do
     # length of tiny list = total length / process_num
     length_tiny=$(( $(echo "$file_list" | wc -l) / $process_num ))
     # file_list_tiny= [length_tiny*(process_idx-1):length_tiny*process_idx]
-    file_list_tiny=$(echo "$file_list" | sed -n "$((length_tiny*(process_idx-1)+1)),$((length_tiny*process_idx))p")
+    file_list_tiny=$(echo "$file_list" | sed -n "$((length_tiny*(process_idx-1)-1)),$((length_tiny*process_idx+1))p")
     # echo "$file_list_tiny"
     echo "#Process $process_idx: $(echo "$file_list_tiny" | wc -l) files"
     process "$file_list_tiny" "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$process_idx" &

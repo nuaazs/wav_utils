@@ -32,8 +32,8 @@ if [ ! -d "$2" ]; then
 fi
 
 # Check if the sample rate is valid
-if [ $3 -ne 1600 ] && [ $3 -ne 48000 ] && [ $3 -ne 8000 ]; then
-    echo "Error: sample rate must be 1600, 8000 or 48000"
+if [ $3 -ne 16000 ] && [ $3 -ne 48000 ] && [ $3 -ne 8000 ]; then
+    echo "Error: sample rate must be 16000, 8000 or 48000"
     exit 1
 fi
 

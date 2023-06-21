@@ -146,7 +146,7 @@ do
     # length of tiny list = total length / process_num
     length_tiny=$(( $(echo "$file_list" | wc -l) / $process_num ))
     # file_list_tiny= [length_tiny*(process_idx-1):length_tiny*process_idx]
-    file_list_tiny=$(echo "$file_list" | sed -n "$((length_tiny*(process_idx-1)+1)),$((length_tiny*process_idx))p")
+    file_list_tiny=$(echo "$file_list" | sed -n "$((length_tiny*(process_idx-1))),$((length_tiny*process_idx+1))p")
     # echo "$file_list_tiny"
     echo "#Process $process_idx: $(echo "$file_list_tiny" | wc -l) files"
     process "$file_list_tiny" "$1" "$2" "$process_idx" &
