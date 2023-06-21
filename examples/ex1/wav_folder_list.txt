@@ -1,1 +1,0 @@
-/ssd2/cti_aftervad_train_data
