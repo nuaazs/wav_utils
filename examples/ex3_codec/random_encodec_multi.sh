@@ -32,7 +32,7 @@ process(){
         fi
         
         # def list in shell ogg_li = ['4.5k', '5.5k', '7.7k', '9.5k', '12.5k', '16.0k', '32k']
-        ogg_li=('4.5k' '5.5k' '7.7k' '9.5k' '12.5k' '16.0k' '32k' 'skip')
+        ogg_li=('4.5k' '5.5k' '7.7k' '9.5k' '12.5k' '16.0k' '32k') # 'skip'
 
         # high 4.5k 5.5k 7.7k
         # mid 9.5k

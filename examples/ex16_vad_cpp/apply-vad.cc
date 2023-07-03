@@ -25,10 +25,10 @@ int main(int argc, char *argv[]) {
     float energy_thresh = 1.5e7;
     po.Register("energy-thresh", &energy_thresh, 
             "energy threshold for energy based vad");
-    int sil_to_speech_trigger = 3;
+    int sil_to_speech_trigger = 10;
     po.Register("sil-to-speech-trigger", &sil_to_speech_trigger,
             "num frames for silence to speech trigger");
-    int speech_to_sil_trigger = 10;
+    int speech_to_sil_trigger = 3;
     po.Register("speech-to-sil-trigger", &speech_to_sil_trigger,
             "num frames for speech to silence trigger");
 

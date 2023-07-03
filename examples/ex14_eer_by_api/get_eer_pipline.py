@@ -16,6 +16,7 @@ import argparse
 parser = argparse.ArgumentParser(description='')
 parser.add_argument('--total_worker', type=int, default=1,help='')
 parser.add_argument('--worker_idx', type=int, default=0,help='')
+# parser.add_argument('--model_name', type=str, default="ERES2NET",help='')
 args = parser.parse_args()
 
 # logger
@@ -38,6 +39,8 @@ def get_embedding(file_path,embeddings):
 if __name__ == "__main__":
     embeddings = {}
     all_wavs = []
+    
+
     embeddings = np.load(f"../../cache/{cfg.NAME}/{cfg.NAME}_embeddings.npy",allow_pickle=True).item()
     for phone in embeddings:
         phone_file_nums = 0
@@ -67,6 +70,8 @@ if __name__ == "__main__":
     print(f"Worker {args.worker_idx} has {len(wav_pairs)} wav pairs.")
     labels = []
     scores = []
+    label_0_cout = 0
+    label_1_cout = 0
 
 
 
@@ -77,14 +82,24 @@ if __name__ == "__main__":
         except:
             logger.error(f"Error in {wav1} or {wav2}")
             continue
+
         #print(f"emb1 shape: {embedding1.shape}")
-        score = similarity(torch.Tensor(embedding1),torch.Tensor(embedding2)).numpy()[0][0]
+        score = similarity(torch.Tensor(embedding1),torch.Tensor(embedding2)).numpy()
+        # print()
         print(f"Phone#1: {phone1}\tPhone#2: {phone2}\tScore:{score}")
         #print(score)
         if phone1 == phone2:
             label = 1
+            label_1_cout += 1
         else:
             label = 0
+            label_0_cout += 1
+        if label_0_cout >= 1000 and label == 0:
+            continue
+        if label_1_cout >= 1000 and label == 1:
+            continue
+        if label_0_cout >= 1000 and label_1_cout >= 1000:
+            break
         scores.append(score)
         labels.append(label)
     # labels = np.array(labels)
@@ -123,6 +138,7 @@ if __name__ == "__main__":
                     label = 1
                 else:
                     label = 0
+
                 scores.append(score)
                 labels.append(label)    
     labels = np.array(labels)

@@ -16,7 +16,8 @@ ADD_NOISE = False
 # "voxcele12_test_data_16k" # voxceleb 16k
 # "voxcele12_test_data_8k"
 # "voxcele12_test_data_8k_16k" # voxceleb先降采样到8k，再上采样回16k
-DATA_FOLDER = "/home/yuanqilong/dataset/newtest" 
+# DATA_FOLDER = "/home/yuanqilong/dataset/newtest" 
+DATA_FOLDER = "/home/zhaosheng/VAF_UTILS/utils/datasets/cti_test_dataset_16k_vad" 
 
 
 # VoxCeleb ECAPA官方提供的模型:"../../models/ECAPATDNN_16k"
@@ -32,7 +33,7 @@ NOISE_PATH = "../../dataset/noise"
 
 
 # NAME = f"{MODEL_NAME}-{SR}k-{DATA_NAME}"
-MODEL_NAME = MODEL_PATH.split("/")[-1]
+MODEL_NAME = "CAMPP" # ,ECAPATDNN,CAMPP
 DATA_NAME = DATA_FOLDER.split("/")[-1]
 
 if ADD_NOISE:

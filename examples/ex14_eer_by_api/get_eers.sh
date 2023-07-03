@@ -1,7 +1,7 @@
 #!/bin/bash
-rm -rf ./pretrained_models
-rm -rf ../../cache/*
-python get_embeddings_and_pairs.py
+# rm -rf ./pretrained_models
+# rm -rf ../../cache/*
+# python get_embeddings_and_pairs.py
 
 for i in {0..89}
 do
