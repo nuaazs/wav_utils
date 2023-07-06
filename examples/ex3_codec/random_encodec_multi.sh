@@ -25,6 +25,12 @@ process(){
         dst_file_path=$(echo $file | sed "s/$pwdesc1/$pwdesc2/g")
         dst_folder_path=$(dirname "$dst_file_path")
 
+        # check if the destination file already exists and its size is larger than 1kb
+        if [ -f "$dst_file_path" ] && [ $(stat -c%s "$dst_file_path") -gt 1024 ]; then
+            # echo "File $dst_file_path already exists and its size is larger than 1kb. Skipping..."
+            continue
+        fi
+
         # if the destination folder does not exist, create it
         if [ ! -d "$dst_folder_path" ]; then
             # echo "mkdir -p $dst_folder_path"
@@ -130,27 +136,46 @@ file_list=$(echo "$file_list" | sort)
 # split file_list to #process_num parts, and process each part in parallel
 
 # split file_list to #process_num parts
-# file_list_list=$(echo "$file_list" | split -l $(( $(echo "$file_list" | wc -l) / $process_num )) - "$1")
-# echo muti_process.sh
-echo "==========================="
-echo ""
-echo "Muti Processing #${process_num}.."
-echo ""
-echo "==========================="
-# def a func to process a list of file
+length_tiny=$(( $file_num / $process_num ))
+remainder=$(( $file_num % $process_num ))
+start_index=1
 
-# for process_idx in {1..$process_num}
-for process_idx in $(seq 1 $process_num)
+# for process_idx in $(seq 1 $process_num)
+# do
+#     if [ $process_idx -le $remainder ]; then
+#         end_index=$(( $start_index + $length_tiny ))
+#     else
+#         end_index=$(( $start_index + $length_tiny - 1 ))
+#     fi
+
+#     # get tiny list by start_index and end_index
+#     file_list_tiny=$(echo "$file_list" | awk "NR>=$start_index && NR<=$end_index")
+#     start_index=$(( $end_index + 1 ))
+
+#     echo "#Process $process_idx: $(echo "$file_list_tiny" | wc -l) files"
+#     process "$file_list_tiny" "$1" "$2" "$process_idx" &
+# done
+
+# wait
+
+echo "All processes completed."
+
+# Check if any files failed to process and capture error logs
+failed_files=0
+
+for file in $file_list
 do
-    # get tiny list by process_idx
-    # length of tiny list = total length / process_num
-    length_tiny=$(( $(echo "$file_list" | wc -l) / $process_num ))
-    # file_list_tiny= [length_tiny*(process_idx-1):length_tiny*process_idx]
-    file_list_tiny=$(echo "$file_list" | sed -n "$((length_tiny*(process_idx-1))),$((length_tiny*process_idx+1))p")
-    # echo "$file_list_tiny"
-    echo "#Process $process_idx: $(echo "$file_list_tiny" | wc -l) files"
-    process "$file_list_tiny" "$1" "$2" "$process_idx" &
+    dst_file_path=$(echo "$file" | sed "s#$1#$2#g")
+    
+    if [ ! -f "$dst_file_path" ]; then
+        echo "Failed to process file: $file" >> error_logs.txt
+        failed_files=$((failed_files+1))
+    fi
 done
-# echo "$file_list_list"
 
-
+if [ $failed_files -gt 0 ]; then
+    echo "Total files failed to process: $failed_files"
+    echo "Error logs are written to error_logs.txt"
+else
+    echo "All files processed successfully."
+fi

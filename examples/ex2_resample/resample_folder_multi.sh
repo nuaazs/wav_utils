@@ -34,6 +34,11 @@ process(){
             mkdir -p /"$dst_folder_path"
         fi
         
+        # check if the file already exists and is larger than 1KB
+        if [ -f "$dst_file_path" ] && [ $(stat -c %s "$dst_file_path") -gt 1024 ]; then
+            continue
+        fi
+
         # ffmpeg with no output
         # -y: overwrite output file if it exists
         # -i: input file
@@ -44,6 +49,10 @@ process(){
         # ffmpeg -y -i "$file" -ac 1 -ar $3 -acodec pcm_s16le -map_channel 0.0.$5 /"$dst_file_path" #> /dev/null 2>&1
         date=$(date +%Y%m%d)
         ffmpeg -y -i "$file" -ac 1 -ar $sample_rate -acodec pcm_s16le -map_channel 0.0.$channel -ss $start -t $duration /"$dst_file_path"  > ${date}_resample.log > /dev/null 2>&1
+        if [ $? -ne 0 ]; then
+            # write error log
+            echo "$file Failed" >> error.log
+        fi
     done
     echo -e "\n\nDone!"
 }
@@ -141,21 +150,51 @@ echo ""
 echo "==========================="
 # def a func to process a list of file
 
-# for process_idx in {1..$process_num}
-for process_idx in $(seq 1 $process_num)
+# calculate the number of files in each process
+files_per_process=$((file_num / process_num))
+remainder_files=$((file_num % process_num))
+
+process_idx=1
+start_idx=1
+for ((i=1; i<=process_num; i++))
 do
-    # get tiny list by process_idx
-    # length of tiny list = total length / process_num
-    length_tiny=$(( $(echo "$file_list" | wc -l) / $process_num ))
-    # file_list_tiny= [length_tiny*(process_idx-1):length_tiny*process_idx]
-    file_list_tiny=$(echo "$file_list" | sed -n "$((length_tiny*(process_idx-1)-1)),$((length_tiny*process_idx+1))p")
+    end_idx=$((start_idx + files_per_process - 1))
+    
+    # distribute remainder files evenly to processes
+    if [ $i -le $remainder_files ]; then
+        end_idx=$((end_idx + 1))
+    fi
+    
+    file_list_tiny=$(echo "$file_list" | sed -n "$start_idx,$end_idx p")
+    
     # echo "$file_list_tiny"
     echo "#Process $process_idx: $(echo "$file_list_tiny" | wc -l) files"
     process "$file_list_tiny" "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$process_idx" &
+    
+    start_idx=$((end_idx + 1))
+    process_idx=$((process_idx + 1))
 done
-# echo "$file_list_list"
 
+wait
 
+echo "All processes completed!"
 
+# Check if any files failed to process and capture error logs
+failed_files=0
 
+for file in $file_list
+do
+    dst_file_path=$(echo "$file" | sed "s#$1#$2#g")
+    
+    if [ ! -f "$dst_file_path" ]; then
+        echo "Failed to process file: $file" >> error_logs.txt
+        failed_files=$((failed_files+1))
+    fi
+done
 
+if [ $failed_files -gt 0 ]; then
+    echo "Total files failed to process: $failed_files"
+    echo "Error logs are written to error_logs.txt"
+else
+    echo "All files processed successfully."
+fi
