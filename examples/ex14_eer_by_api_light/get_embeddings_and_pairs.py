@@ -35,8 +35,8 @@ def get_embedding(file_path,model="ERES2NET",url="http://192.168.3.169:5001/enco
 
     return_data = {}
     for _model_name in model.split(","):
-        print(response.json()["msg"])
-        print(_model_name)
+        # print(response.json()["msg"])
+        # print(_model_name)
         embeddings = response.json()["file_emb"][_model_name]["embedding"]
         temp_file = [_key for _key in embeddings.keys()][0]
         emb_result = embeddings[temp_file]
@@ -85,5 +85,5 @@ if __name__ == "__main__":
                 continue
             for model_name in models:
                 os.makedirs(f"{cache_path}/{model_name}",exist_ok=True)
-                np.save(os.path.join(cache_path,"embeddings.npy"),embeddings)
+                np.save(os.path.join(f"{cache_path}/{model_name}","embeddings.npy"),embeddings)
         print("Done!")

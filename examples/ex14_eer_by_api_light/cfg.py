@@ -11,14 +11,14 @@ LOAD_NPY = False
 WORKERS = 20
 ADD_NOISE = False
 
-DATA_FOLDER = "/home/zhaosheng/VAF_UTILS/utils/datasets/cti_test_dataset_16k_vad" 
+DATA_FOLDER = "/home/zhaosheng/VAF_UTILS/utils/datasets/cti_test_dataset_16k_envad" 
 
 # 干扰集
 NOISE_PATH = "../../dataset/noise"
 
 
 # NAME = f"{MODEL_NAME}-{SR}k-{DATA_NAME}"
-MODEL_NAME = "CAMPP,ECAPATDNN,CAMPP" # ,ECAPATDNN,CAMPP
+MODEL_NAME = "ERES2NET,CAMPP,ECAPATDNN" # ,ECAPATDNN,CAMPP
 DATA_NAME = DATA_FOLDER.split("/")[-1]
 
 if ADD_NOISE:
