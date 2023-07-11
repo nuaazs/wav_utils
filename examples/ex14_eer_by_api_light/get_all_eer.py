@@ -5,9 +5,10 @@ import cfg
 
 if __name__ == "__main__":
     embeddings = {}
-    npy_path = f"../../cache/{cfg.NAME}"
+    npy_path_raw = f"../../cache/{cfg.NAME}"
+    print(npy_path_raw)
     for model in cfg.MODEL_NAME.split(","):
-        npy_path = os.path.join(npy_path,model)
+        npy_path = os.path.join(npy_path_raw,model)
         # glob all score npy files
         score_npy_files = sorted([os.path.join(npy_path, x) for x in os.listdir(npy_path) if "scores" in x])
         labels_npy_files = sorted([os.path.join(npy_path, x) for x in os.listdir(npy_path) if "labels" in x])
@@ -34,6 +35,8 @@ if __name__ == "__main__":
         return_string = metrics.get_precision_reall(scores,labels,th_list)
         # write to file
         with open(f"./output_pngs/{cfg.NAME}/{model}/precision_recall.txt","w") as f:
+            f.write(f"labels: {labels.shape}\n")
+            f.write(f"scores: {scores.shape}\n")
             f.write(f"EER: {result.eer}\n")
             f.write(f"minDCF: {min_dcf}\n")
             f.write(f"thresh: {result.thresh}\n")

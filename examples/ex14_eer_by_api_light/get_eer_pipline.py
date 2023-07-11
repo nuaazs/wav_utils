@@ -34,6 +34,7 @@ similarity = torch.nn.CosineSimilarity(dim=-1, eps=1e-6)
 def get_embedding(file_path,embeddings):
     phone = file_path.split('/')[-2]
     filename = file_path.split('/')[-1].split('.')[0]
+    print(embeddings[phone].keys())
     return phone,filename,embeddings[phone][filename]
 
 if __name__ == "__main__":
@@ -46,6 +47,9 @@ if __name__ == "__main__":
     # if cfg.LOAD_NPY:
     for model in cfg.MODEL_NAME.split(","):
         embeddings = np.load(f"../../cache/{cfg.NAME}/{model}/embeddings.npy",allow_pickle=True).item()
+        print(f"embedding: {embeddings.keys()}")
+        embeddings = embeddings[model]
+        print(f"embedding: {embeddings.keys()}")
         for phone in embeddings:
             phone_file_nums = 0
             for filename in embeddings[phone]:
@@ -78,14 +82,17 @@ if __name__ == "__main__":
         label_1_cout = 0
 
 
-
+        # print(f"Wav pairs length: {len(wav_pairs)}")
+        # print(f"{wav_pairs}")
         for wav1, wav2 in tqdm(wav_pairs):
-            try:
-                phone1, filename1, embedding1 = get_embedding(wav1,embeddings)
-                phone2, filename2, embedding2 = get_embedding(wav2,embeddings)
-            except:
-                logger.error(f"Error in {wav1} or {wav2}")
-                continue
+            # try:
+            print(f"Loading {wav1}...")
+            phone1, filename1, embedding1 = get_embedding(wav1,embeddings)
+            print(f"Loading {wav2}...")
+            phone2, filename2, embedding2 = get_embedding(wav2,embeddings)
+            # except:
+            #     logger.error(f"Error in {wav1} or {wav2}")
+            #     continue
 
             #print(f"emb1 shape: {embedding1.shape}")
             score = similarity(torch.Tensor(embedding1),torch.Tensor(embedding2)).numpy()

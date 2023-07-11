@@ -10,7 +10,7 @@ import os
 
 from utils import print_title
 
-def get_embedding(file_path,model="ERES2NET",url="http://192.168.3.169:5001/encode"):
+def get_embedding(file_path,model="ERES2NET",url="http://192.168.3.169:5001/encode",spkid="123456"):
     """get all wav's embedding, and save to npy file(each for a different model)
     
 
@@ -22,13 +22,13 @@ def get_embedding(file_path,model="ERES2NET",url="http://192.168.3.169:5001/enco
         embedding(numpy array): _description_
     """
     payload={
-        "spkid": "123456",
+        "spkid": spkid,
         "channel": 0,
         "filelist": f"local://{file_path}",
         "save_oss": "False",
         "score_threshold": 0.7,
         "start":"0",
-        "length":"90",
+        "length":"999",
     }
     # print(payload)
     response = requests.request("POST", url, data=payload)
@@ -70,20 +70,22 @@ if __name__ == "__main__":
         phone_path = os.path.join(cfg.DATA_FOLDER, phone)
         print(f"Phone path : {phone_path}")
         for file in os.listdir(phone_path):
-            # try:
-            file_path = os.path.join(phone_path, file)
-            filename = os.path.splitext(file)[0]
-            file_size = os.path.getsize(file_path)
+            try:
+                file_path = os.path.join(phone_path, file)
+                filename = os.path.splitext(file)[0]
+                file_size = os.path.getsize(file_path)
 
 
-            print(f"\tFile path : {file_path}")
-            all_model_temp = get_embedding(file_path,cfg.MODEL_NAME)
-            for model_name in models:
-                embeddings[model_name][phone][filename] = all_model_temp[model_name]
-            # except Exception as e:
-            #     print(f"Error in {file_path}: {e}")
+                print(f"\tFile path : {file_path}")
+                all_model_temp = get_embedding(file_path,cfg.MODEL_NAME,spkid=filename.replace("_","-"))
+                for model_name in models:
+                    embeddings[model_name][phone][filename] = all_model_temp[model_name]
+                    print(f"\t\tModel name : {model_name}")
+                    print(f"\t\t\tEmbedding shape : {all_model_temp[model_name].shape}")
+            except Exception as e:
+                print(f"Error in {file_path}: {e}")
                 continue
-            for model_name in models:
-                os.makedirs(f"{cache_path}/{model_name}",exist_ok=True)
-                np.save(os.path.join(f"{cache_path}/{model_name}","embeddings.npy"),embeddings)
-        print("Done!")
+    for model_name in models:
+        os.makedirs(f"{cache_path}/{model_name}",exist_ok=True)
+        np.save(os.path.join(f"{cache_path}/{model_name}","embeddings.npy"),embeddings)   
+    sprint("Done!")
